@@ -1,0 +1,41 @@
+ body file control {
+       namespace => "lastops";
+    }
+
+bundle agent user(user,uid,description,home_dir,group_primary,groups_secondary,shell,pw) {
+        defaults:
+            "home_dir"          string => "/home/$(user)";
+            "pw"                string => "!";
+            "shell"             string => "/bin/bash";
+            "groups_secondary"  slist => { "users" };
+        files:
+            "$(home_dir)/."
+                create => "true",
+                perms => default:og("$(user)","$(user)");
+        users:
+            "$(user)"
+                policy => "present",
+                uid =>  "$(uid)",
+                description => "$(description)",
+                home_dir => "$(home_dir)",
+                group_primary => "$(group_primary)",
+                groups_secondary => { @(groups_secondary) },
+                shell => "$(shell)",
+                password => default:hashed_password("$(pw)");
+    }
+
+bundle agent softuser(user,uid,description,home_dir,group_primary,groups_secondary,shell,pw){
+
+    }
+
+bundle agent nouser(user){
+
+    }
+
+bundle agent softnouser(user){
+
+    }
+
+bundle agent lockuser(user){
+
+    }
