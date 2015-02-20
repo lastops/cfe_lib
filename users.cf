@@ -1,13 +1,8 @@
- body file control {
+body file control {
        namespace => "lastops";
     }
 
-bundle agent user(user,uid,description,home_dir,group_primary,groups_secondary,shell,pw) {
-        defaults:
-            "home_dir"          string => "/home/$(user)";
-            "pw"                string => "!";
-            "shell"             string => "/bin/bash";
-            "groups_secondary"  slist => { "users" };
+bundle agent user(user,uid,description,home_dir,group_primary,groups_secondary,shell,pw){
         files:
             "$(home_dir)/."
                 create => "true",
@@ -24,18 +19,56 @@ bundle agent user(user,uid,description,home_dir,group_primary,groups_secondary,s
                 password => default:hashed_password("$(pw)");
     }
 
-bundle agent softuser(user,uid,description,home_dir,group_primary,groups_secondary,shell,pw){
-
+bundle agent soft_user(user,uid,description,home_dir,group_primary,groups_secondary,shell,pw){
+        classes:
+            "add_$(user)" not   => userexists("$(user)");
+        files:
+            "$(home_dir)/."
+                create => "true",
+                perms => default:og("$(user)","$(user)"),
+                ifvarclass => "add_$(user)";
+        users:
+            "$(user)"
+                policy => "present",
+                uid =>  "$(uid)",
+                description => "$(description)",
+                home_dir => "$(home_dir)",
+                group_primary => "$(group_primary)",
+                groups_secondary => { @(groups_secondary) },
+                shell => "$(shell)",
+                password => default:hashed_password("$(pw)"),
+                ifvarclass => "add_$(user)";
     }
 
-bundle agent nouser(user){
-
+bundle agent no_user(user){
+    users:
+        "$(user)"
+            policy => "absent";
     }
 
-bundle agent softnouser(user){
-
+bundle agent no_user_tidy(user,home_dir){
+    users:
+        "$(user)"
+            policy => "absent";
+    files:
+       "$(home_dir)"
+            delete => default:tidy;
     }
 
-bundle agent lockuser(user){
+bundle agent lock_user(user){
+    users:
+        "$(user)"
+            policy => "locked";
+    }
 
+bundle agent enforce_password(user,pw){
+    files:
+        "/etc/shadow"
+            edit_line => default:set_user_field("$(user)", 2, "$(pw)");
+    }
+
+bundle agent enfoce_shell(user,shell){
+    files:
+        "/etc/passwd"
+            edit_line => default:set_user_field("$(user)", 7, "$(shell)");
     }
