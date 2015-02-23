@@ -3,6 +3,8 @@ body file control {
     }
 
 bundle agent user(user,uid,description,home_dir,group_primary,groups_secondary,shell,pw){
+        vars:
+            "g_s" slist => splitstring("$(groups_secondary)", ",", 1000);
         files:
             "$(home_dir)/."
                 create => "true",
@@ -14,12 +16,14 @@ bundle agent user(user,uid,description,home_dir,group_primary,groups_secondary,s
                 description => "$(description)",
                 home_dir => "$(home_dir)",
                 group_primary => "$(group_primary)",
-                groups_secondary => { @(groups_secondary) },
+                groups_secondary => { @(g_s) },
                 shell => "$(shell)",
                 password => default:hashed_password("$(pw)");
     }
 
 bundle agent soft_user(user,uid,description,home_dir,group_primary,groups_secondary,shell,pw){
+        vars:
+            "g_s" slist => splitstring("$(groups_secondary)", ",", 1000);
         classes:
             "add_$(user)" not   => userexists("$(user)");
         files:
@@ -34,7 +38,7 @@ bundle agent soft_user(user,uid,description,home_dir,group_primary,groups_second
                 description => "$(description)",
                 home_dir => "$(home_dir)",
                 group_primary => "$(group_primary)",
-                groups_secondary => { @(groups_secondary) },
+                groups_secondary => { @(g_s) },
                 shell => "$(shell)",
                 password => default:hashed_password("$(pw)"),
                 ifvarclass => "add_$(user)";
