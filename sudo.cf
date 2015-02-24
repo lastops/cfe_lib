@@ -1,0 +1,38 @@
+body file control {
+       namespace => "lastops";
+    }
+
+bundle agent sudo_defaults(user,rule)
+    {
+
+}
+
+bundle agent sudo_user(user,rule)
+    {
+
+}
+
+bundle agent sudo_group(group,rule)
+    {
+
+}
+
+bundle agent sudo_user_alias(alias_name,users)
+    {
+
+}
+
+bundle agent sudo_cmd_alias(alias_name,commands)
+    {
+
+}
+
+bundle agent sudo_runas_alias(alias_name,)
+    {
+
+}
+
+bundle agent sudo_host_alias(alias_name,hosts)
+    {
+
+}

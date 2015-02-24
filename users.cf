@@ -76,3 +76,16 @@ bundle agent enfoce_shell(user,shell){
         "/etc/passwd"
             edit_line => default:set_user_field("$(user)", 7, "$(shell)");
     }
+
+# bundle agent authorized_keys(user,home_dir,keys){
+#     files:
+#         "$(home_dir)/.ssh/authorized_keys"
+#             edit_line => default:set_user_field("$(user)", 7, "$(shell)"),
+#             perms => default:og("$(user)","$(user)");
+#     }
+
+# bundle agent enfoce_authorized_keys(user,home_dir,keys){
+#     files:
+#         "$(home_dir)/.ssh/authorized_keys"
+#             edit_line => default:set_user_field("$(user)", 7, "$(shell)");
+#     }
