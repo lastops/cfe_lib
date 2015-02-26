@@ -1,0 +1,10 @@
+bundle agent soft_group(group,gid)
+    {
+        classes:
+            "add_$(group)" not   => groupexists("$(group)");
+
+        commands:
+            "/usr/sbin/groupadd -g $(gid) $(group)"
+                ifvarclass => "add_$(group)",
+                classes          => if_repaired("added_group");
+    }
