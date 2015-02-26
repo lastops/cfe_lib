@@ -41,7 +41,7 @@ bundle agent sudo_include_json(json,include,template)
                 classes => default:if_repaired("updated_include");
             "/etc/sudoers"
                 create => "true",
-                edit_line => default:insert_lines("#include /etc/$(include)"),
+                edit_line => default:insert_lines("#include $(sudo_include_dir)/$(include)"),
                 perms => default:mog("0440","root","root"),
                 classes => default:if_repaired("enabled_include");
         reports:
