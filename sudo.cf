@@ -26,6 +26,8 @@ bundle agent sudo_enforce_includes
 
 bundle agent sudo_include_json(json,include,template)
     {
+        vars:
+            "sudo_include_dir" string => "/etc/sudoers.d"
         # "template"  string => "$(sys.inputdir)/lastops/templates/sudo.mustache"
         files:
             "$(sudo_include_dir)/."
