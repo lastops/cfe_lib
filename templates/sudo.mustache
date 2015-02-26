@@ -1,0 +1,28 @@
+{{#headers}}
+{{header}}
+{{/headers}}
+{{#defaults}}
+Defaults{{{default}}}
+{{/defaults}}
+{{#user_aliases}}
+User_Alias {{alias}} = {{users}}
+{{/user_aliases}}
+{{#cmd_aliases}}
+Cmnd_Alias {{alias}} = {{commands}}
+{{/cmd_aliases}}
+{{#host_aliases}}
+Host_Alias {{alias}} = {{hosts}}
+{{/host_aliases}}
+{{#ranas_aliases}}
+Runas_Alias {{alias}} = {{runas}}
+{{/ranas_aliases}}
+{{#users}}
+{{#sudo}}
+{{user}} {{rules}}
+{{/sudo}}
+{{/users}}
+{{#groups}}
+{{#sudo}}
+%{{group}} {{rules}}
+{{/sudo}}
+{{/groups}}

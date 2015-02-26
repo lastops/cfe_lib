@@ -1,0 +1,96 @@
+{
+    "headers": [
+        {
+            "header": "##########################################################################\n###### WARNING: This file is managed with cfengine3.\n######          Please contact YPG IS/IT:\n######          - http://issues.ypg.com/browse/YPINFRA \n######          - infra.support@ypg.com\n#########################################################################"
+        }
+    ],
+    "defaults": [
+        {
+            "default": "        env_reset"
+        },
+        {
+            "default": "        syslog=auth"
+        },
+        {
+            "default": "        log_year, logfile=/var/log/sudo.log"
+        },
+        {
+            "default": ">root   !set_logname"
+        },
+        {
+            "default": ":nagios !requiretty"
+        }
+    ],
+    "user_aliases": [
+        {
+            "alias": "IS_IT_ADMINS",
+            "users": "bmccrackin,jniebla1,vastrav2,valadm1,vlen1,mserpie1,mpierre,grompre1,"
+        },
+        {
+            "alias": "IS_IT_DBA",
+            "users": "1"
+        },
+        {
+            "alias": "IS_IT_NETOPS",
+            "users": "2"
+        },
+        {
+            "alias": "IS_IT_DCM_ADMINS",
+            "users": "3"
+        },
+        {
+            "alias": "CGI_DBA",
+            "users": "4"
+        },
+        {
+            "alias": "BACKUP",
+            "users": "5"
+        }
+    ],
+    "cmd_aliases": [
+        {
+            "alias": "RO",
+            "commands": "/bin/cat, /bin/grep, /bin/more, /usr/bin/head, /usr/bin/tail, /usr/bin/less, /bin/ls, /bin/ps"
+        }
+    ],
+    "host_aliases": [
+        {
+            "alias": "",
+            "hosts": ""
+        }
+    ],
+    "ranas_aliases": [
+        {
+            "alias": "",
+            "runas": ""
+        }
+    ],
+    "users": [
+        {
+            "user": "root",
+            "sudo": [
+                {
+                    "rules": "ALL=(ALL) ALL"
+                }
+            ]
+        },
+        {
+            "user": "toor",
+            "sudo": [
+                {
+                    "rules": "ALL=(ALL) ALL"
+                }
+            ]
+        }
+    ],
+    "groups": [
+        {
+            "group": "sudo",
+            "sudo": [
+                {
+                    "rules": "ALL=(ALL:ALL) ALL"
+                }
+            ]
+        }
+    ]
+}

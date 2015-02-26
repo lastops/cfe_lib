@@ -2,37 +2,49 @@ body file control {
        namespace => "lastops";
     }
 
-bundle agent sudo_defaults(user,rule)
+bundle agent sudo_enforce_includes
     {
-
+        files:
+            "/etc/sudoers"
+                create => "true",
+                perms => default:mog("root","root","0440"),
+                classes => default:if_repaired("created_sudoers");
+            "/etc/sudoers"
+                edit_line => default:delete_lines_matching("^(?!#include).*"),
+                classes => default:if_repaired("cleaned_up_sudoers");
+            "/etc/sudoers"
+                edit_line => default:delete_lines_matching(".*includedir.*"),
+                classes => default:if_repaired("deleted_includedir");
+        reports:
+            created_sudoers::
+                "$(sys.fqhost): /etc/sudoers exits and has proper permissions";
+            cleaned_up_sudoers::
+                "$(sys.fqhost): Enforcing includes-only /etc/sudoers";
+            deleted_includedir::
+                "$(sys.fqhost): Enforsing file-based includes in /etc/sudoers";
 }
 
-bundle agent sudo_user(user,rule)
+bundle agent sudo_include_json(json,include,template)
     {
-
-}
-
-bundle agent sudo_group(group,rule)
-    {
-
-}
-
-bundle agent sudo_user_alias(alias_name,users)
-    {
-
-}
-
-bundle agent sudo_cmd_alias(alias_name,commands)
-    {
-
-}
-
-bundle agent sudo_runas_alias(alias_name,)
-    {
-
-}
-
-bundle agent sudo_host_alias(alias_name,hosts)
-    {
-
+        # "template"  string => "$(sys.inputdir)/lastops/templates/sudo.mustache"
+        files:
+            "$(sudo_include_dir)/."
+                create => "true",
+                perms => default:mog("root","root","0440");
+            "$(sudo_include_dir)/$(include)"
+                create => "true",
+                edit_template => "$(template)",
+                template_method => "mustache",
+                template_data => readjson("$(json)", 4000),
+                classes => default:if_repaired("updated_include");
+            "/etc/sudoers"
+                create => "true",
+                edit_line => default:insert_lines("#include /etc/$(include)"),
+                perms => default:mog("root","root","0440"),
+                classes => default:if_repaired("enabled_include");
+        reports:
+            updated_include::
+                "$(sys.fqhost): Updated include $(sudo_include_dir)/$(include)";
+            enabled_include::
+                "$(sys.fqhost): Enabled include $(sudo_include_dir)/$(include) in /etc/sudoers";
 }

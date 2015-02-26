@@ -1,0 +1,29 @@
+{
+    "root": {
+        "uid": "0",
+        "description": "",
+        "home_dir": "/root",
+        "group_primary": "0",
+        "groups_secondary": "",
+        "shell": "/bin/bash",
+        "pw": "$6$DKyx/SbL$fq9/6KB7YvKJzLgdqRi0q5I9SP3CSWZKyAPlCYkkxsDciR4QZOv/aa0ZSqOi9thFtPJLTjgOGdQHs6HDYN5eM0"
+    },
+    "toor": {
+        "uid": "10000",
+        "description": "",
+        "home_dir": "/home/toor",
+        "group_primary": "",
+        "groups_secondary": "sys,games",
+        "shell": "/bin/bash",
+        "pw": "$6$DKyx/SbL$fq9/6KB7YvKJzLgdqRi0q5I9SP3CSWZKyAPlCYkkxsDciR4QZOv/aa0ZSqOi9thFtPJLTjgOGdQHs6HDYN5eM0"
+    },
+    "test": {
+        "uid": "10001",
+        "description": "",
+        "home_dir": "/home/test",
+        "group_primary": "",
+        "groups_secondary": "users,staff",
+        "shell": "/bin/zsh",
+        "pw": "$6$DKyx"
+    }
+}
