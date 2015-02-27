@@ -37,7 +37,11 @@ bundle agent user(user, uid, description, home_dir, group_primary, groups_second
                 group_primary => "$(group_primary)",
                 groups_secondary => { @(g_s) },
                 shell => "$(shell)",
-                password => default:hashed_password("$(pw)");
+                password => default:hashed_password("$(pw)"),
+                classes => default:if_repaired("enforsing_user");
+        reports:
+            enforsing_user::
+                "Enforsing user's parameters for $(user). Making it exists";
 }
 
 bundle agent soft_user(user, uid, description, home_dir, group_primary, groups_secondary, shell, pw)
@@ -52,11 +56,16 @@ bundle agent soft_user(user, uid, description, home_dir, group_primary, groups_s
 # @param pw Password hash
 {
     classes:
-        "add_$(user)" not   => default:userexists("$(user)");
+        "add_$(user)" not => userexists("$(user)");
 
     methods:
-        "add_users"     usebundle => lastops:user("$(user)", "$(uid)", "$(description)", "$(home_dir)", "$(group_primary)", "$(groups_secondary)", "$(shell)", "$(pw)"),
-            ifvarclass => "add_$(user)";
+        "add_users" usebundle => lastops:user("$(user)", "$(uid)", "$(description)", "$(home_dir)", "$(group_primary)", "$(groups_secondary)", "$(shell)", "$(pw)"),
+            ifvarclass => "add_$(user)",
+            classes => default:if_repaired("added_user");
+    reports:
+        added_user::
+                "Making sure user $(user) exists";
+
 }
 
 bundle agent no_user(user)

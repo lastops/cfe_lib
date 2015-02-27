@@ -30,17 +30,11 @@ bundle agent users_in_group(group, users)
 # @param group string Group name
 # @parma user slist User names
 {
-    vars:
-        "files_to_edit" slist => {
-                                    "/etc/group",
-                                    "/etc/group-",
-                                };
-
     classes:
         "$(group)_exixts" expression => groupexists("$(group)");
 
     files:
-        "$(files_to_edit)"
+        "/etc/group"
             edit_line => default:append_user_field("$(group)", "4", @(users)),
             ifvarclass => "$(group)_exixts",
             classes  => default:if_repaired("added_users_to_group");
