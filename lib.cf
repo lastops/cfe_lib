@@ -1,0 +1,24 @@
+###############################################################################
+#
+# Collection of small helper functions
+#
+# brought to you by LastOps (http://lastops.com)
+#
+###############################################################################
+
+body file control
+# @ignore
+{
+       namespace => "lastops";
+}
+
+body classes generic_classificator(base_name)
+# @brief Sets classes based on `base_name` by adding '_kept', '_repaired' or
+# '_failed' to it depending on promise outcome.
+# @param base_name string Base name to use for resulting class
+{
+    promise_kept => {'${base_name}_kept', };
+    promise_repaired => {'${base_name}_repaired', };
+    repair_failed => {'${base_name}_failed', };
+}
+
