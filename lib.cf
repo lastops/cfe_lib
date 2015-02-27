@@ -22,3 +22,10 @@ body classes generic_classificator(base_name)
     repair_failed => {'${base_name}_failed', };
 }
 
+body common safe_hostname_class
+# @brief Sets hostname class in a safe way. See also CFEngine Bug 6870.
+{
+    classes:
+        '${sys.host}' expression => 'any';
+}
+
