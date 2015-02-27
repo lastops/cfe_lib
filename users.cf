@@ -1,3 +1,8 @@
+###############################################################################
+# User management API
+# brought to you by LastOps (http://lastops.com)
+###############################################################################
+
 body file control
 # @ignore
 {
@@ -46,29 +51,12 @@ bundle agent soft_user(user, uid, description, home_dir, group_primary, groups_s
 # @param shell Shell
 # @param pw Password hash
 {
-        vars:
-            "g_s" slist => splitstring("$(groups_secondary)", ",", 1000);
+    classes:
+        "add_$(user)" not   => userexists("$(user)");
 
-        classes:
-            "add_$(user)" not   => userexists("$(user)");
-
-        files:
-            "$(home_dir)/."
-                create => "true",
-                perms => default:mog("700", "$(user)","$(user)"),
-                ifvarclass => "add_$(user)";
-
-        users:
-            "$(user)"
-                policy => "present",
-                uid =>  "$(uid)",
-                description => "$(description)",
-                home_dir => "$(home_dir)",
-                group_primary => "$(group_primary)",
-                groups_secondary => { @(g_s) },
-                shell => "$(shell)",
-                password => default:hashed_password("$(pw)"),
-                ifvarclass => "add_$(user)";
+    methods:
+        "add_users"     usebundle => lastops:user("$(user)", "$(uid)", "$(description)", "$(home_dir)", "$(group_primary)", "$(groups_secondary)", "$(shell)", "$(pw)");
+            ifvarclass => "add_$(user)";
 }
 
 bundle agent no_user(user)

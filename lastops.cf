@@ -1,3 +1,8 @@
+###############################################################################
+# CFEngine library API
+# brought to you by LastOps (http://lastops.com)
+###############################################################################
+
 bundle common lastops_common
 # @ignore
 {
