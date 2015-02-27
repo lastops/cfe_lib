@@ -19,16 +19,16 @@ bundle agent soft_group(group, gid)
     commands:
         "/usr/sbin/groupadd -g $(gid) $(group)"
             ifvarclass => "add_$(group)",
-            classes => if_repaired("added_group");
+            classes => default:if_repaired("added_group");
     reports:
         added_group::
-            "Added group $(group)"
+            "Added group $(group)";
 }
 
-bundle agent users_in_group(group, user)
+bundle agent users_in_group(group, users)
 # @brief Adds unix user to a group
 # @param group string Group name
-# @parma user string User name
+# @parma user slist User names
 {
     vars:
         "files_to_edit" slist => {
@@ -41,9 +41,9 @@ bundle agent users_in_group(group, user)
 
     files:
         "$(files_to_edit)"
-            edit_line => default:append_user_field("$(group)", "4", "$(user)"),
+            edit_line => default:append_user_field("$(group)", "4", @(users)),
             ifvarclass => "$(group)_exixts",
-            classes  => if_repaired("added_user_to_group");
+            classes  => default:if_repaired("added_users_to_group");
 
      reports:
         added_user_to_group::
