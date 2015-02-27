@@ -1,14 +1,28 @@
-body file control {
-       namespace => "lastops";
-    }
+body file control
+# @ignore
+{
+    namespace => "lastops";
+}
 
-bundle agent user(user,uid,description,home_dir,group_primary,groups_secondary,shell,pw){
+bundle agent user(user, uid, description, home_dir, group_primary, groups_secondary, shell, pw)
+# @brief Creates unix user and makes sure it retains its properties
+# @param user Username
+# @param uid Numeric UID
+# @param description Description
+# @param home_dir Home directory
+# @param group_primary Primary group
+# @param groups_secondary List of additional groups
+# @param shell Shell
+# @param pw Password hash
+{
         vars:
             "g_s" slist => splitstring("$(groups_secondary)", ",", 1000);
+
         files:
             "$(home_dir)/."
                 create => "true",
-                perms => default:og("$(user)","$(user)");
+                perms => default:mog("700", "$(user)","$(user)");
+
         users:
             "$(user)"
                 policy => "present",
@@ -19,18 +33,31 @@ bundle agent user(user,uid,description,home_dir,group_primary,groups_secondary,s
                 groups_secondary => { @(g_s) },
                 shell => "$(shell)",
                 password => default:hashed_password("$(pw)");
-    }
+}
 
-bundle agent soft_user(user,uid,description,home_dir,group_primary,groups_secondary,shell,pw){
+bundle agent soft_user(user, uid, description, home_dir, group_primary, groups_secondary, shell, pw)
+# @brief Creates unix user if it doesn't exist
+# @param user Username
+# @param uid Numeric UID
+# @param description Description
+# @param home_dir Home directory
+# @param group_primary Primary group
+# @param groups_secondary List of additional groups
+# @param shell Shell
+# @param pw Password hash
+{
         vars:
             "g_s" slist => splitstring("$(groups_secondary)", ",", 1000);
+
         classes:
             "add_$(user)" not   => userexists("$(user)");
+
         files:
             "$(home_dir)/."
                 create => "true",
-                perms => default:og("$(user)","$(user)"),
+                perms => default:mog("700", "$(user)","$(user)"),
                 ifvarclass => "add_$(user)";
+
         users:
             "$(user)"
                 policy => "present",
@@ -42,40 +69,58 @@ bundle agent soft_user(user,uid,description,home_dir,group_primary,groups_second
                 shell => "$(shell)",
                 password => default:hashed_password("$(pw)"),
                 ifvarclass => "add_$(user)";
-    }
+}
 
-bundle agent no_user(user){
+bundle agent no_user(user)
+# @brief Removes user from system
+# @param user Username
+{
     users:
         "$(user)"
             policy => "absent";
-    }
+}
 
-bundle agent no_user_tidy(user,home_dir){
+bundle agent no_user_tidy(user, home_dir)
+# @brief Removes user and its home directory
+# @param user Username
+# @param home_dir Home directory
+{
     users:
         "$(user)"
             policy => "absent";
     files:
        "$(home_dir)"
             delete => default:tidy;
-    }
+}
 
-bundle agent lock_user(user){
+bundle agent lock_user(user)
+# @brief Locks user account by setting its password to '*'
+# @param user Username
+{
     users:
         "$(user)"
             policy => "locked";
-    }
+}
 
-bundle agent enforce_password(user,pw){
+bundle agent enforce_password(user, pw)
+# @brief Enforces password for user
+# @param user Username
+# @param pw Password hash (hashed using default to target system aglorithm)
+{
     files:
         "/etc/shadow"
             edit_line => default:set_user_field("$(user)", 2, "$(pw)");
-    }
+}
 
-bundle agent enfoce_shell(user,shell){
+bundle agent enfoce_shell(user, shell)
+# @brief Enforce shell for user account
+# @param user Username
+# @param shell Path to shell binary
+{
     files:
         "/etc/passwd"
             edit_line => default:set_user_field("$(user)", 7, "$(shell)");
-    }
+}
 
 # bundle agent authorized_keys(user,home_dir,keys){
 #     files:

@@ -1,5 +1,8 @@
-bundle agent soft_group(group,gid)
-    {
+bundle agent soft_group(group, gid)
+# @brief Creates a unix group
+# @param group string Group name
+# @parma gid string GID value
+{
         classes:
             "add_$(group)" not   => groupexists("$(group)");
 
