@@ -1,0 +1,10 @@
+###############################################################################
+# SSH management API
+# brought to you by LastOps (http://lastops.com)
+###############################################################################
+
+body file control
+# @ignore
+{
+       namespace => "lastops";
+}

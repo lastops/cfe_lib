@@ -41,7 +41,7 @@ bundle agent users_in_group(group, user)
 
     files:
         "$(files_to_edit)"
-            edit_line => append_user_field("$(group)", "4", "$(user)"),
+            edit_line => default:append_user_field("$(group)", "4", "$(user)"),
             ifvarclass => "$(group)_exixts",
             classes  => if_repaired("added_user_to_group");
 
