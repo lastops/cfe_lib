@@ -3,8 +3,9 @@ bundle common lastops_common
 {
     vars:
         "inputs" slist => {
-                            "$(this.promise_dirname)/users.cf",
+                            "$(this.promise_dirname)/lib.cf",
                             "$(this.promise_dirname)/sudo.cf",
+                            "$(this.promise_dirname)/users.cf",
                         };
 
     reports:
