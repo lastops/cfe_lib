@@ -55,7 +55,7 @@ bundle agent soft_user(user, uid, description, home_dir, group_primary, groups_s
         "add_$(user)" not   => userexists("$(user)");
 
     methods:
-        "add_users"     usebundle => lastops:user("$(user)", "$(uid)", "$(description)", "$(home_dir)", "$(group_primary)", "$(groups_secondary)", "$(shell)", "$(pw)");
+        "add_users"     usebundle => lastops:user("$(user)", "$(uid)", "$(description)", "$(home_dir)", "$(group_primary)", "$(groups_secondary)", "$(shell)", "$(pw)"),
             ifvarclass => "add_$(user)";
 }
 
