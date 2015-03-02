@@ -8,3 +8,19 @@ body file control
 {
        namespace => "lastops";
 }
+
+bundle agent enforce_ssh_json(json,ssh_config,template)
+{
+    files:
+        "$(ssh_config)"
+            create => "true",
+            edit_template => "$(template)",
+            template_method => "mustache",
+            template_data => readjson("$(json)", 4000),
+            classes => default:if_repaired("enforced_ssh_json");
+    commands:
+        # "enforced_ssh_json"
+    reports:
+        enforced_ssh_json::
+            "";
+}

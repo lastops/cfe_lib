@@ -11,6 +11,7 @@ bundle common lastops_common
                             "$(this.promise_dirname)/groups.cf",
                             "$(this.promise_dirname)/users.cf",
                             "$(this.promise_dirname)/sudo.cf",
+                            "$(this.promise_dirname)/ssh.cf",
                             "$(this.promise_dirname)/helpers.cf"
                         };
 
