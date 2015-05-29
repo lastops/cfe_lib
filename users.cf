@@ -122,7 +122,7 @@ bundle agent authorized_keys(user,home_dir,key)
 # @brief Add public files to user's ~/.ssh/authorized_keys
 # @param user Username
 # @param home_dir Absolute path to user's home directory
-# @param keys Path to users public key file
+# @param key Path to users public key file
 {
     files:
         "$(home_dir)/.ssh/"
@@ -130,12 +130,12 @@ bundle agent authorized_keys(user,home_dir,key)
             perms => default:mog("700", "$(user)","$(user)");
         "$(home_dir)/.ssh/authorized_keys"
             create => "true",
-            edit_line => default:insert_file("$(keys)"),
+            edit_line => default:insert_file("$(key)"),
             perms => default:og("$(user)","$(user)");
     }
 
 #TODO:
-# bundle agent enfoce_authorized_keys(user,home_dir,keys){
+# bundle agent enfoce_authorized_keys(user,home_dir,key){
 #     files:
 #
 #     }
