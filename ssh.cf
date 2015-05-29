@@ -1,0 +1,122 @@
+###############################################################################
+# SSH management API
+# brought to you by LastOps (http://lastops.com)
+###############################################################################
+
+body file control
+# @ignore
+{
+       namespace => "lastops";
+}
+
+bundle agent enforce_ssh_json(json,ssh_config,template)
+{
+    files:
+        "$(ssh_config)"
+            create => "true",
+            edit_template => "$(template)",
+            template_method => "mustache",
+            template_data => readjson("$(json)", 4000),
+            classes => default:if_repaired("enforced_ssh_json");
+    commands:
+        # "enforced_ssh_json"
+    reports:
+        enforced_ssh_json::
+            "Enforcing $(ssh_config) desired state.";
+}
+
+
+# Dragons ahead. Copied from dsx/ssh/ssh.cf
+bundle common setup_ssh_vars
+# @brief Sets some vars depending on the global environment
+{
+    vars:
+        # sshd_config location
+        any::
+            'sshd_config_file' string => '/etc/ssh/sshd_config';
+
+        test_run::
+            'sshd_config_file' string => '${this.promise_dirname}/../../tests/sshd_config';
+
+        # ssh restart command
+        debian::
+            'ssh_restart_command' string => '/etc/init.d/ssh restart';
+
+        redhat::
+            'ssh_restart_command' string => '/etc/init.d/sshd restart';
+
+        test_run::
+            'ssh_restart_command' string => '';
+}
+
+bundle agent setup_ssh
+# @brief Sets some vars depending on the local environment
+{
+    vars:
+        any::
+            'sshd_config[PermitRootLogin]' string => 'without-password';
+            'sshd_config[Protocol]' string => '2';
+            'sshd_config[UseDNS]' string => 'no';
+            'sshd_ports' slist => {'22000', };
+
+        lastops:safe_server_droidnest_org::
+            'sshd_ports' slist => {'443', '22000', };
+
+    methods:
+        'sshd_config' usebundle => 'edit_sshd_config';
+        'sshguard_remove' usebundle => 'remove_sshguard';
+
+    reports:
+        verbose::
+            'SSHd config: ${setup_ssh_vars.sshd_config_file}';
+            'SSHd restart command: ${setup_ssh_vars.ssh_restart_command}';
+}
+
+bundle agent edit_sshd_config
+# @brief Sets up sshd in a certain way
+{
+    files:
+        '${setup_ssh_vars.sshd_config_file}'
+            handle => 'edit_sshd_config',
+            comment => 'Edit SSHd config file',
+            edit_line => set_line_based("setup_ssh.sshd_config", " ", "\s+", ".*", "\s*#\s*"),
+            classes => lastops:generic_classificator('sshd_config');
+
+        sshd_config_kept|sshd_config_repaired::
+            '${setup_ssh_vars.sshd_config_file}'
+                handle => 'set_sshd_ports',
+                comment => 'Set multiple "Port" statements in sshd_config',
+                edit_line => set_multiple_ports('${setup_ssh.sshd_ports}');
+
+    processes:
+            'sshd' restart_class => 'sshd_failed';
+
+    commands:
+        (sshd_config_repaired|sshd_failed).!no_restarts.!test_run::
+            '${setup_ssh_vars.ssh_restart_command}'
+                handle => 'sshd_restart',
+                comment => 'Restart sshd if it is required',
+                classes => lastops:generic_classificator('sshd_restart');
+
+    reports:
+        no_restarts::
+            'Service restart prohibition is in effect. Not restarting SSH daemon.';
+
+        sshd_config_repaired::
+            'SSHd config has been edited';
+
+        sshd_restart_repaired::
+            'SSHd has been restarted';
+}
+
+bundle edit_line set_multiple_ports(ports)
+# @brief Sets multiple Port statements in sshd_config
+# @param ports Slist of ports
+{
+    delete_lines:
+        '^\s*Port\s*.*$';
+
+    insert_lines:
+        'Port ${ports}';
+}
+
