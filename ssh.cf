@@ -27,7 +27,6 @@ bundle agent enforce_ssh_json(json,ssh_config,template)
 
 
 # Dragons ahead. Copied from dsx/ssh/ssh.cf
-
 bundle common setup_ssh_vars
 # @brief Sets some vars depending on the global environment
 {
