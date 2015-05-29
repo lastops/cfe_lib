@@ -22,7 +22,7 @@ bundle agent enforce_ssh_json(json,ssh_config,template)
         # "enforced_ssh_json"
     reports:
         enforced_ssh_json::
-            "";
+            "Enforcing $(ssh_config) desired state.";
 }
 
 
