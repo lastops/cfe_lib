@@ -64,7 +64,7 @@ bundle agent setup_ssh
 
     methods:
         'sshd_config' usebundle => 'edit_sshd_config';
-        'sshguard_remove' usebundle => 'remove_sshguard';
+        # 'sshguard_remove' usebundle => 'remove_sshguard';
 
     reports:
         verbose::
