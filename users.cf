@@ -38,10 +38,10 @@ bundle agent user(user, uid, description, home_dir, group_primary, groups_second
                 groups_secondary => { @(g_s) },
                 shell => "$(shell)",
                 password => default:hashed_password("$(pw)"),
-                classes => default:if_repaired("enforsing_user");
+                classes => default:if_repaired("enforcing_user");
         reports:
-            enforsing_user::
-                "Enforsing user's parameters for $(user). Making it exists";
+            enforcing_user::
+                "Enforcing user's parameters for $(user). Making sure it exists";
 }
 
 bundle agent soft_user(user, uid, description, home_dir, group_primary, groups_secondary, shell, pw)
